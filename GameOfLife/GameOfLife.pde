@@ -2,7 +2,7 @@ CellularAutomata automata;
 int w, h;
 PVector backgroundColor = new PVector(192, 192, 192); // #c0c0c0 | a light gray
 
-boolean continousStepping = true;
+boolean continousStepping = false, step = false;
 int stepCooldown = 300, lastStep = millis();
 
 void setup()
@@ -13,13 +13,10 @@ void setup()
   
   background(backgroundColor.x, backgroundColor.y, backgroundColor.z);
   stroke(backgroundColor.x, backgroundColor.y, backgroundColor.z);
-  //fill(backgroundColor.x, backgroundColor.y, backgroundColor.z);
-  //rect(0, 0, width, height);
 
   w = width;
   h = height;
   automata = new CellularAutomata();
-  addRules();
 
   if (!continousStepping)
   {
@@ -29,24 +26,30 @@ void setup()
 
 void draw()
 {
-  automata.updateGrid();
+  if (continousStepping || step)
+  {
+    automata.step();
+    step = false;
+  }
+  else
+  {
+    automata.drawGrid(); 
+  }
 }
-
-void addRules()
-{
-  RuleBook.addRule();
-}
-
-boolean placed = false;
 
 void keyPressed()
 {
   if (key == ' ' && millis() - lastStep >= stepCooldown) {
+    step = true;
     redraw();
   }
-  if (key == 'p' && !placed) {
-    automata.placePulsar(new PVector(automata.grid.grid.length/2, automata.grid.grid[0].length/2));
-    placed = true;
+  if (key == 'p') {
+    automata.placePulsar(new PVector(random(automata.grid.getWidth()), random(automata.grid.getHeight())));
+    redraw();
+  }
+  if (key == 'g') {
+    automata.placeGlider(new PVector(random(automata.grid.getWidth()), random(automata.grid.getHeight())));
+    redraw();
   }
 }
 

@@ -61,17 +61,45 @@ class Grid
     println("canvas size: " + width + "x" + height);
     println("live cells: " + liveCells);
   }
+  
+  int getWidth()
+  {
+    return grid.length;
+  }
+  
+  int getHeight()
+  {
+    return grid[0].length;
+  }
+  
+  // returns the value of the desire cell
+  // returns false and prints error when given position is out of bounds
+  boolean getCell(PVector pos)
+  {
+    if (pos.x >= getWidth() || pos.x < 0) {
+      //println ("getCell: pos.x out of bounds. pos.x = " + (int)pos.x + " and grid width = " +  getWidth());
+      return false;
+    }
+    else if (pos.y >= getHeight() || pos.y < 0) {
+      //println ("getCell: pos.y out of bounds. pos.y = " + (int)pos.y + " and grid height = " +  getHeight());
+      return false;
+    } 
+    else
+    {
+      return grid[(int)pos.x][(int)pos.y];
+    }
+  }
 
-  // sets a cell to the given value
+  // sets a cell to the given value and returns if the cell was able to be placed
   // skips values that are out of bounds and prints a note
   boolean setCell(PVector pos, boolean val)
   {
-    if (pos.x >= grid.length) {
-      println ("setCell: pos.x out of bounds. pos.x = " + (int)pos.x + " and grid width = " +  grid.length);
+    if (pos.x >= getWidth()) {
+      println ("setCell: pos.x out of bounds. pos.x = " + (int)pos.x + " and grid width = " +  getWidth());
       return false;
     }
-    else if (pos.y >= grid[(int)pos.x].length) {
-      println ("setCell: pos.y out of bounds. pos.y = " + (int)pos.y + " and grid height = " +  grid[(int)pos.x].length);
+    else if (pos.y >= getHeight()) {
+      println ("setCell: pos.y out of bounds. pos.y = " + (int)pos.y + " and grid height = " +  getHeight());
       return false;
     } 
     else
@@ -80,6 +108,21 @@ class Grid
       changedCells.add(pos);
       liveCells++;
       return true;
+    }
+  }
+  
+  // replaces the current grid with the given grid
+  void updateGrid(boolean[][] g)
+  {
+    if(g.length != getWidth() || g[0].length != getHeight())
+    {
+      println("updateGrid: new grid is a different size than the current grid");
+      grid = g;
+      
+    }
+    else
+    {
+      grid = g; 
     }
   }
 
@@ -127,7 +170,7 @@ class Grid
 
       rect(gridToCanvasCoord(cell.x) + offset.x, gridToCanvasCoord(cell.y) + offset.y, actualWidth, actualWidth);
     }
-
-    changedCells = new ArrayList<PVector>();
+    
+    changedCells = new ArrayList<PVector>(); 
   }
 }
