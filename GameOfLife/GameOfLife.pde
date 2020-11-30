@@ -41,7 +41,7 @@ void draw()
 void keyPressed()
 {
   boolean update = false;
-  if (key == ' ' && millis() - lastStep >= stepCooldown) {
+  if (!continousStepping && key == ' ' && millis() - lastStep >= stepCooldown) {
     step = true;
     update = true;
   }
