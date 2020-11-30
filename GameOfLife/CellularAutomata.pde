@@ -11,16 +11,26 @@ class CellularAutomata
     ruleBook = new RuleBook();
     grid.draw();
   }
+  
+  void drawGrid()
+  {
+    grid.draw();
+  }
 
   void updateGrid()
   {
-    grid.setCell(new PVector(i, i++), true);
-    grid.draw();
+    drawGrid();
   }
 
   void updateOptimized()
   {
-    grid.setCell(new PVector(i, i++), true);
     grid.drawOptimized();
+  }
+  
+  void placePulsar(PVector pos)
+  {
+     grid.setCell(new PVector(pos.x-1, pos.y), true);
+     grid.setCell(new PVector(pos.x+1, pos.y), true);
+     grid.setCell(new PVector(pos.x, pos.y), true);
   }
 }
