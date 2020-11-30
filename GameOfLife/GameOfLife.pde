@@ -2,14 +2,15 @@ CellularAutomata automata;
 int w, h;
 PVector backgroundColor = new PVector(192, 192, 192); // #c0c0c0 | a light gray
 
-boolean continousStepping = false, step = false;
+boolean continousStepping = true, step = false;
 int stepCooldown = 300, lastStep = millis();
+int frameRate = 15;
 
 void setup()
 {
   surface.setResizable(true);
-  size(500, 500);
-  frameRate(5);
+  size(750, 500);
+  frameRate(frameRate);
   
   background(backgroundColor.x, backgroundColor.y, backgroundColor.z);
   stroke(backgroundColor.x, backgroundColor.y, backgroundColor.z);
@@ -39,18 +40,27 @@ void draw()
 
 void keyPressed()
 {
+  boolean update = false;
   if (key == ' ' && millis() - lastStep >= stepCooldown) {
     step = true;
-    redraw();
+    update = true;
   }
   if (key == 'p') {
     automata.placePulsar(new PVector(random(automata.grid.getWidth()), random(automata.grid.getHeight())));
-    redraw();
+    update = true;
   }
   if (key == 'g') {
-    automata.placeGlider(new PVector(random(automata.grid.getWidth()), random(automata.grid.getHeight())));
-    redraw();
+    automata.placeGosperGlider(new PVector(random(automata.grid.getWidth()), random(automata.grid.getHeight())));
+    update = true;
   }
+  if (key == 's') {
+    //automata.placeGliderGun(new PVector(random(automata.grid.getWidth()), random(automata.grid.getHeight())));
+    automata.placeGliderGun(new PVector(7, 2));
+  }
+  
+  if(update)
+    redraw();
+  
 }
 
 // code attempting to optimize rendering
