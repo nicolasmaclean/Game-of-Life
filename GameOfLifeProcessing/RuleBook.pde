@@ -14,13 +14,7 @@ class RuleBook
     boolean currentValue = grid.getCell(pos);
     int liveNeighbors = getLiveNeighbors(pos);
     
-    boolean one = GOLRuleOne(liveNeighbors, currentValue);
-    boolean two = GOLRuleTwo(liveNeighbors, currentValue);
-    
-    if (one || two)
-      return true;
-    else
-      return false;
+    return GOL(liveNeighbors, currentValue);
   }
 
   // return an array of the positions of each neighbor in the grid
@@ -52,14 +46,9 @@ class RuleBook
   }
 }
 
-// live cells survive if they have 2 or 3 live neighbors (survival)
-static boolean GOLRuleOne(int liveNeighbors, boolean currentState)
+// Conway's Game of Life rules in one little statement
+// overpopulation and underpopulation kill, reproduction with 3 neighbors, and 
+static boolean GOL(int liveNeighbors, boolean currentState)
 {
-  return currentState && (liveNeighbors == 2 || liveNeighbors == 3); 
-}
-
-// dead cells with 3 live neighbors become alive (reproduction)
-static boolean GOLRuleTwo(int liveNeighbors, boolean currentState)
-{
-  return liveNeighbors == 3; 
+  return currentState & (liveNeighbors == 2) | (liveNeighbors == 3); 
 }
