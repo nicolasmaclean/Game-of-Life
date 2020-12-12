@@ -5,6 +5,7 @@ var draw;
 
 var GameofLife;
 var viewer;
+var userInput;
 
 const defaultCellSize = 10;
 const minZoom = 1 / defaultCellSize;
@@ -21,8 +22,9 @@ function Start()
     canvas = document.querySelector("#glCanvas");
     draw = canvas.getContext('2d');
 
-    // initializes viewer
+    // initializes other stuffs
     viewer = new Viewer(new Vector(0, 0), 1);
+    userInput = new UserInput(viewer, canvas);
 
     // initializes Cellular Automata Simulation
     GameofLife = new CellularAutomata();
