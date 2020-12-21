@@ -1,9 +1,9 @@
 // renders the grid using HTML Canvas
 
-const defaultCellSize = 10;
-const minZoom = 1 / defaultCellSize;
-const clr_bg = '#c0c0c0';
-const fps = 10; // fps
+var defaultCellSize = 10;
+var minZoom = 1 / defaultCellSize; // this needs to be updated if defaultCellSize is changed
+var clr_bg = '#c0c0c0';
+var fps = 10; // fps
 
 var canvas;
 var draw;
@@ -50,7 +50,6 @@ function Update(loop)
     if (elapsed > fpsInterval)
     {
         lastFrame = currentFrame - (elapsed % fpsInterval);
-        // console.log(elapsed)
 
         PreUpdate();
         GameofLife.step();
