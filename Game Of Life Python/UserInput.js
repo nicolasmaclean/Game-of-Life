@@ -5,6 +5,7 @@ class UserInput
         // static variables
         UserInput.viewer = viewer;
         UserInput.mouse_grabbing = false;
+        UserInput.scrollDivider = 15;
 
         // adds mouse events
         canvas.onmousemove = function (event)
@@ -21,6 +22,16 @@ class UserInput
         {
             UserInput.mouseDown(event);
         };
+
+        canvas.onmouseleave = function (event)
+        {
+            UserInput.mouseUp(event);
+        };
+
+        canvas.onwheel = function (event)
+        {
+            UserInput.mouseScroll(event);
+        };
     }
 
     // moves the viewer by mouse delta on mousemove event
@@ -29,6 +40,7 @@ class UserInput
         if(UserInput.mouse_grabbing)
         {
             UserInput.viewer.pos.add(new Vector(e.movementX, e.movementY));
+            UserInput.viewer.needDraw = true;
         }
     }
     
@@ -44,5 +56,10 @@ class UserInput
     {
         UserInput.mouse_grabbing = false;
         document.body.style.cursor = "default";
+    }
+
+    static mouseScroll(e)
+    {
+        UserInput.viewer.addZoom(-e.deltaY / UserInput.scrollDivider)
     }
 }

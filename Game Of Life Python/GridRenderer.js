@@ -1,7 +1,11 @@
 // renders the grid using HTML Canvas
 
+// configurations
 var defaultCellSize = 10;
-var minZoom = 1 / defaultCellSize; // this needs to be updated if defaultCellSize is changed
+
+// artifacts occur outside of these zoom ranges with html canvas
+var minZoom = 10 / defaultCellSize; // this needs to be updated if defaultCellSize is changed
+var maxZoom = 90 / defaultCellSize; // this needs to be updated if defaultCellSize is changed
 var clr_bg = '#c0c0c0';
 var fps = 10; // fps
 
@@ -54,6 +58,10 @@ function Update(loop)
         PreUpdate();
         GameofLife.step();
         PostUpdate();
+    } else if (viewer.needDraw)
+    {
+        Draw();
+        viewer.needDraw = false;
     }
 
 
@@ -84,6 +92,13 @@ function PostUpdate()
     draw.stroke();
 }
 
+// calls pre/post update drawing
+function Draw()
+{
+    PreUpdate();
+    PostUpdate();
+}
+
 function DrawGrid()
 {
     // grid coords within the window bounds, inclusive
@@ -112,20 +127,31 @@ function DrawSquare(x, y, side)
 }
 
 // stores the coord of the bottom left corner of the screen and other viewing stuff
-function Viewer(pos, zoom)
+class Viewer
 {
-    this.pos = pos;
-    this.zoom = zoom;
-    this.cellSize = defaultCellSize * zoom;
+    constructor(pos, zoom, draw)
+    {
+        this.pos = pos;
+        this.zoom = zoom;
+        this.needDraw = false;
+        this.cellSize = defaultCellSize * zoom;
+    }
 
-    function setZoom(z)
+    setZoom(z)
     {
         this.zoom = z;
 
         if (this.zoom < minZoom)
             this.zoom = minZoom;
+        else if (this.zoom > maxZoom)
+            this.zoom = maxZoom;
 
-        this.cellSize = defaultCellSize * zoom;
+        this.cellSize = defaultCellSize * this.zoom;
+    }
+
+    addZoom(a)
+    {
+        this.setZoom(this.zoom + a);
     }
 }
 
