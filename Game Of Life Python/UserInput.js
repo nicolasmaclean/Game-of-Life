@@ -15,22 +15,33 @@ class UserInput
 
         canvas.onmouseup = function (event)
         {
-            UserInput.mouseUp(event);
+            UserInput.mouseUp_left(event);
         };
 
         canvas.onmousedown = function (event)
         {
-            UserInput.mouseDown(event);
+            if (event.button === 0)
+            {
+                UserInput.mouseDown_left(event);
+            }
         };
 
         canvas.onmouseleave = function (event)
         {
-            UserInput.mouseUp(event);
+            UserInput.mouseUp_left(event);
         };
-
+        
         canvas.onwheel = function (event)
         {
-            UserInput.mouseScroll(event);
+            if (event.button === 0)
+            {
+                UserInput.mouseScroll(event);
+            }
+        };
+
+        canvas.oncontextmenu = function (e) {
+            e.preventDefault();
+            UserInput.mouseClick_right(event);
         };
     }
 
@@ -45,21 +56,29 @@ class UserInput
     }
     
     // grabs canvas
-    static mouseDown(e)
+    static mouseDown_left(e)
     {
         UserInput.mouse_grabbing = true;
         document.body.style.cursor = "grab";
     }
     
     // lets go of canvas
-    static mouseUp(e)
+    static mouseUp_left(e)
     {
         UserInput.mouse_grabbing = false;
         document.body.style.cursor = "default";
     }
-
+    
+    // zooms in and out
     static mouseScroll(e)
     {
         UserInput.viewer.addZoom(-e.deltaY / UserInput.scrollDivider)
+    }
+    
+    // selects cell and pushs to list
+    static mouseClick_right(e)
+    {
+        UserInput.viewer.screenCoordsActivated.push(new Vector(e.clientX, e.clientY));
+        UserInput.viewer.needDraw = true;
     }
 }

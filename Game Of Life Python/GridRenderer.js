@@ -1,5 +1,12 @@
 // renders the grid using HTML Canvas
 
+// enums
+const loopEnum = {
+    noLoop: 0,
+    drawLoop: 1,
+    stepLoop: 2
+}
+
 // configurations
 var defaultCellSize = 10;
 
@@ -8,6 +15,7 @@ var minZoom = 10 / defaultCellSize; // this needs to be updated if defaultCellSi
 var maxZoom = 90 / defaultCellSize; // this needs to be updated if defaultCellSize is changed
 var clr_bg = '#c0c0c0';
 var fps = 10; // fps
+var update = loopEnum.drawLoop;
 
 var canvas;
 var draw;
@@ -18,6 +26,7 @@ var userInput;
 
 var xBounds, yBounds;
 var lastFrame, fpsInterval;
+
 
 function Start()
 {
@@ -42,31 +51,33 @@ function Start()
     PostUpdate();
 
     // begins update loop
-    Update(true);
+    Update();
 }
 
 // TODO: figure out how I want it to loop or not
-function Update(loop)
+function Update()
 {
     var currentFrame = Date.now();
     elapsed = currentFrame - lastFrame;
 
-    if (elapsed > fpsInterval)
+    if (update === loopEnum.stepLoop && elapsed > fpsInterval)
     {
         lastFrame = currentFrame - (elapsed % fpsInterval);
 
         PreUpdate();
+        handleInput();
         GameofLife.step();
         PostUpdate();
-    } else if (viewer.needDraw)
+    } else if (update === loopEnum.drawLoop && viewer.needDraw)
     {
+        handleInput();
         Draw();
         viewer.needDraw = false;
     }
 
 
     // continues update loop
-    if(loop)
+    if(update !== loopEnum.noLoop)
         window.requestAnimationFrame(Update);
 }
 
@@ -126,6 +137,26 @@ function DrawSquare(x, y, side)
     draw.fillRect(Math.floor(x) + 1, Math.floor(y) + 1, side - 1, side - 1);
 }
 
+// handles input stored in the Viewer object
+function handleInput()
+{
+    console.log("i");
+    viewer.screenCoordsActivated.forEach(val => {
+        // need to convert given screen coord to a grid coord
+        // var gridCoord = Vector.floor((Vector.add(viewer.pos, val)).div_int(viewer.cellSize));
+        console.log(val);
+        var gridCoord = Vector.add(viewer.pos, val);
+        console.log(gridCoord);
+        gridCoord.div_int(viewer.cellSize);
+        console.log(gridCoord);
+        gridCoord = Vector.floor(gridCoord);
+        console.log(gridCoord);
+        GameofLife.grid.setCell(gridCoord, !GameofLife.grid.getCell(gridCoord));
+    });
+
+    viewer.screenCoordsActivated = [];
+}
+
 // stores the coord of the bottom left corner of the screen and other viewing stuff
 class Viewer
 {
@@ -134,6 +165,7 @@ class Viewer
         this.pos = pos;
         this.zoom = zoom;
         this.needDraw = false;
+        this.screenCoordsActivated = [];
         this.cellSize = defaultCellSize * zoom;
     }
 

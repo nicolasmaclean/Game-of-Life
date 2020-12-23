@@ -38,6 +38,35 @@ class Vector
         return this.x === other_vector.x && this.y === other_vector.y;
     }
 
+    add_int(value)
+    {
+        this.x += value;
+        this.y += value;
+    }
+    
+    sub_int(value)
+    {
+        this.x -= value;
+        this.y -= value;
+    }
+
+    mult_int(value)
+    {
+        this.x *= value;
+        this.y *= value;
+    }
+
+    div_int(value)
+    {
+        this.x /= value;
+        this.y /= value;
+    }
+
+    equals_int(value)
+    {
+        return this.x === value && this.y === value;
+    }
+
     // static versions of above methods that will return new vectors, instead of modifying one of them
     static add(vector, other_vector)
     {
@@ -62,6 +91,21 @@ class Vector
     static equals(vector, other_vector)
     {
         return vector.x === other_vector.x && vector.y === other_vector.y;
+    }
+
+    static zero()
+    {
+        return new Vector(0, 0);
+    }
+
+    static floor(vector)
+    {
+        return new Vector(Math.floor(vector.x), Math.floor(vector.y));
+    }
+
+    static ceil(vector)
+    {
+        return new Vector(Math.ceil(vector.x), Math.ceil(vector.y));
     }
 }
 
