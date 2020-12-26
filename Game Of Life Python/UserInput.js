@@ -73,6 +73,7 @@ class UserInput
     static mouseScroll(e)
     {
         UserInput.viewer.addZoom(-e.deltaY / UserInput.scrollDivider)
+        UserInput.viewer.needDraw = true;
     }
     
     // selects cell and pushs to list

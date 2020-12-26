@@ -1,6 +1,5 @@
 // basic 2d cell with boolean value
 
-
 class Cell
 {
     constructor(bool)

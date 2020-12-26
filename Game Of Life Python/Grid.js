@@ -41,8 +41,8 @@ class Grid
     getCell(pos)
     {
         var str = Grid.tostring(pos);
-        if (this.mat.has(str))
-            return true;
+        if (this.hasCell(pos))
+            return this.mat.get(str);
         else
             return false;
     }
@@ -86,10 +86,13 @@ class Grid
         })
     }
 
+    // removes a cell from the grid
     removeCell(pos)
     {
         if (this.hasCell(pos))
-            this.mat.delete(pos);
+        {
+            this.mat.delete(Grid.tostring(pos));
+        }
     }
 
     // returns a list of live cells neighboring given cell

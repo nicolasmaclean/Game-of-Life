@@ -42,9 +42,7 @@ function Start()
 
     // initializes Cellular Automata Simulation
     GameofLife = new CellularAutomata();
-    GameofLife.grid.setCell(new Vector(5, 4), true);
-    GameofLife.grid.setCell(new Vector(5, 5), true);
-    GameofLife.grid.setCell(new Vector(5, 6), true);
+    GameofLife.grid.setCells_true([new Vector(5, 4), new Vector(5, 5), new Vector(5, 6)]);
 
     // draw inital grid
     PreUpdate();
@@ -60,15 +58,20 @@ function Update()
     var currentFrame = Date.now();
     elapsed = currentFrame - lastFrame;
 
+    // simulation loop
     if (update === loopEnum.stepLoop && elapsed > fpsInterval)
     {
         lastFrame = currentFrame - (elapsed % fpsInterval);
 
         PreUpdate();
+
         handleInput();
         GameofLife.step();
+
         PostUpdate();
-    } else if (update === loopEnum.drawLoop && viewer.needDraw)
+    } 
+    // draw loop
+    else if (update === loopEnum.drawLoop && viewer.needDraw)
     {
         handleInput();
         Draw();
@@ -101,6 +104,8 @@ function PostUpdate()
     draw.lineTo(canvas.width-1, 1);
     draw.lineTo(1, 1);
     draw.stroke();
+
+    GameofLife.grid.pruneDefaultValues();
 }
 
 // calls pre/post update drawing
@@ -140,19 +145,25 @@ function DrawSquare(x, y, side)
 // handles input stored in the Viewer object
 function handleInput()
 {
-    console.log("i");
+    // gathers grid coords in a set to remove duplicates
+    gridCoords = new Set();
+
     viewer.screenCoordsActivated.forEach(val => {
-        // need to convert given screen coord to a grid coord
-        // var gridCoord = Vector.floor((Vector.add(viewer.pos, val)).div_int(viewer.cellSize));
-        console.log(val);
-        var gridCoord = Vector.add(viewer.pos, val);
-        console.log(gridCoord);
+        // converts screen space to grid space
+        var gridCoord = Vector.sub(val, viewer.pos);
+        gridCoord.sub_int(10);
         gridCoord.div_int(viewer.cellSize);
-        console.log(gridCoord);
         gridCoord = Vector.floor(gridCoord);
+        console.log(val);
         console.log(gridCoord);
-        GameofLife.grid.setCell(gridCoord, !GameofLife.grid.getCell(gridCoord));
+        console.log(" "); // mouse coords are strange and the cell sizes are 20 pixels not 10
+
+        gridCoords.add(gridCoord);
     });
+    
+    gridCoords.forEach(val => {
+        GameofLife.grid.setCell(val, !GameofLife.grid.getCell(val));
+    })
 
     viewer.screenCoordsActivated = [];
 }
