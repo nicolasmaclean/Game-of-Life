@@ -1,4 +1,13 @@
-// renders the grid using HTML Canvas
+//  Nick Maclean's JavaScript implementation of Conway's Game of Life
+//  A custom sparse matrix is created using a javascript map to allow an infinite grid
+//  I have attempted to make this as modular as possible to allow modifications for other 2d cellular automata's or rendering methods
+//  This is still a WIP, so further modularizing will come
+//  12/27/20
+
+// To Use: include the the the included js files and a canvas element with the id "glcanvas"
+// left click is used to move the viewer's position across the grid
+// right click can be held or pressed to toggle cells' states
+
 
 // enums
 const loopEnum = {
@@ -9,23 +18,23 @@ const loopEnum = {
 
 // configurations
 var defaultCellSize = 10;
-
-// artifacts occur outside of these zoom ranges with html canvas
-var minZoom = 10 / defaultCellSize; // this needs to be updated if defaultCellSize is changed
-var maxZoom = 90 / defaultCellSize; // this needs to be updated if defaultCellSize is changed
 var clr_bg = '#c0c0c0';
-var fps = 10; // fps
+var fps = 10;
 var update = loopEnum.drawLoop;
 
+// artifacts occur outside of these zoom ranges with html canvas
+var minZoom = 10 / defaultCellSize;
+var maxZoom = 90 / defaultCellSize;
+
+// references
 var canvas;
-var canvas_layer1
 var draw;
-var draw_layer1;
 
 var GameofLife;
 var viewer;
 var userInput;
 
+// misc globals
 var xBounds, yBounds;
 var lastFrame, fpsInterval;
 
@@ -34,12 +43,7 @@ function Start()
 {
     // gets HTML stuff ready
     canvas = document.querySelector("#glCanvas");
-    canvas_layer1 = document.createElement("canvas");
     draw = canvas.getContext('2d');
-    draw_layer1 = canvas_layer1.getContext('2d');
-
-    canvas_layer1.width = 200;
-    canvas_layer1.height = 200;
 
     // initializes other stuffs
     viewer = new Viewer(new Vector(0, 0), 1);
@@ -63,6 +67,7 @@ function Start()
 // TODO: cut out as much redrawing as possible. only redraw parts of the canvas that need it, if there has been any changes to the cells displayed
 function Update()
 {
+    // frame rate control
     var currentFrame = Date.now();
     elapsed = currentFrame - lastFrame;
 
@@ -77,7 +82,8 @@ function Update()
         GameofLife.step();
 
         PostUpdate();
-    } 
+    }
+
     // draw loop
     else if (update === loopEnum.drawLoop && viewer.needDraw)
     {
@@ -157,6 +163,7 @@ function DrawSquare(x, y, side)
 // handles input stored in the Viewer object
 function handleInput()
 {
+    // handles incoming coords
     var inCoords = NSet.difference(viewer.newCoords, viewer.coordsInLine);
     inCoords.forEach(val =>
     {
@@ -165,7 +172,7 @@ function handleInput()
 
     viewer.newCoords = new NSet();
 
-    // keeps track of all coordinates in the line being drawn
+    // handles line drawing
     if (!viewer.drawing)
     {
         viewer.coordsInLine = new NSet();
@@ -173,49 +180,6 @@ function handleInput()
     else 
     {
         viewer.coordsInLine.union(inCoords);
-    }
-}
-
-// stores the coord of the bottom left corner of the screen and other viewing stuff
-class Viewer
-{
-    constructor(pos, zoom, draw)
-    {
-        this.pos = pos;
-        this.zoom = zoom;
-        this.cellSize = defaultCellSize * zoom;
-
-        this.needDraw = false;
-        this.drawing = false;
-        this.newCoords = new NSet();
-        this.coordsInLine = new NSet();
-    }
-
-    setZoom(z)
-    {
-        this.zoom = z;
-
-        if (this.zoom < minZoom)
-            this.zoom = minZoom;
-        else if (this.zoom > maxZoom)
-            this.zoom = maxZoom;
-
-        this.cellSize = defaultCellSize * this.zoom;
-    }
-
-    addZoom(a)
-    {
-        this.setZoom(this.zoom + a);
-    }
-
-    screenToGrid(coord)
-    {
-        var gridCoord = Vector.sub(coord, viewer.pos);
-        gridCoord.sub_int(10);
-        gridCoord.div_int(viewer.cellSize);
-        gridCoord = Vector.floor(gridCoord);
-
-        return gridCoord;
     }
 }
 
