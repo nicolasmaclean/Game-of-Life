@@ -3,27 +3,53 @@
 <head>
     <title>Conway's Game of Life by Nick</title>
 
+    <!-- styling -->
     <style>
+        *
+        {
+            font-family: 'Roboto', sans-serif;
+        }
+
         body
         {
             margin: 5;
-            overflow: hidden;
+            /* overflow: hidden; */
+        }
+
+        p1
+        {
+            line-height: 150%;
         }
     </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
 
-    <!-- <script type="text/javascript" src="GridRenderer.js"></script> -->
+    <!-- javascript files -->
     <script type="text/javascript" src="GridRenderer.js"></script>
     <script type="text/javascript" src="Cell.js"></script>
     <script type="text/javascript" src="CellularAutomata.js"></script>
     <script type="text/javascript" src="Grid.js"></script>
     <script type="text/javascript" src="Rules.js"></script>
-    <script type="text/javascript" src="Vector.js"></script>
     <script type="text/javascript" src="UserInput.js"></script>
+    <script type="text/javascript" src="Vector.js"></script>
+    <script type="text/javascript" src="NSet.js"></script>
 
 </head>
 <body>
     <canvas id="glCanvas" width="500" height="500">
         Sorry. HTML Canvas is not supported in you browser.
     </canvas>
+
+    <section id="debug">
+        <h1> Debugging Info </h1>
+
+        <p1> Drawing a Line: </p1>
+        <p1 id="drawing"> n/a </p1>
+        <br/>
+
+        <p1> Coords in Line: </p1>
+        <p1 id="drawingLine"> n/a </p1>
+        <br/>
+    </section>
 </body>
 </html>

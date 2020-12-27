@@ -67,6 +67,11 @@ class Vector
         return this.x === value && this.y === value;
     }
 
+    equals(other_vector)
+    {
+        return this.x === other_vector.x && this.y === other_vector.y;
+    }
+
     // static versions of above methods that will return new vectors, instead of modifying one of them
     static add(vector, other_vector)
     {
@@ -106,6 +111,11 @@ class Vector
     static ceil(vector)
     {
         return new Vector(Math.ceil(vector.x), Math.ceil(vector.y));
+    }
+
+    toString()
+    {
+        return "[" + this.x + ", " + this.y +"]";
     }
 }
 

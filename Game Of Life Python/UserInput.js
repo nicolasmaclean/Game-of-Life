@@ -48,10 +48,17 @@ class UserInput
     // moves the viewer by mouse delta on mousemove event
     static mouseMove(e)
     {
-        if(UserInput.mouse_grabbing)
+        if(e.buttons === 1 && UserInput.mouse_grabbing)
         {
             UserInput.viewer.pos.add(new Vector(e.movementX, e.movementY));
             UserInput.viewer.needDraw = true;
+        }
+        else if(e.buttons === 2)
+        {
+            UserInput.viewer.screenCoordsActivated.push(new Vector(e.clientX, e.clientY));
+            UserInput.viewer.needDraw = true;
+
+            UserInput.viewer.drawing = true;
         }
     }
     
@@ -81,5 +88,6 @@ class UserInput
     {
         UserInput.viewer.screenCoordsActivated.push(new Vector(e.clientX, e.clientY));
         UserInput.viewer.needDraw = true;
+        UserInput.viewer.drawing = false;
     }
 }

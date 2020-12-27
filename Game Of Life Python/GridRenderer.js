@@ -18,7 +18,9 @@ var fps = 10; // fps
 var update = loopEnum.drawLoop;
 
 var canvas;
+var canvas_layer1
 var draw;
+var draw_layer1;
 
 var GameofLife;
 var viewer;
@@ -32,7 +34,12 @@ function Start()
 {
     // gets HTML stuff ready
     canvas = document.querySelector("#glCanvas");
+    canvas_layer1 = document.createElement("canvas");
     draw = canvas.getContext('2d');
+    draw_layer1 = canvas_layer1.getContext('2d');
+
+    canvas_layer1.width = 200;
+    canvas_layer1.height = 200;
 
     // initializes other stuffs
     viewer = new Viewer(new Vector(0, 0), 1);
@@ -53,6 +60,7 @@ function Start()
 }
 
 // TODO: figure out how I want it to loop or not
+// TODO: cut out as much redrawing as possible. only redraw parts of the canvas that need it, if there has been any changes to the cells displayed
 function Update()
 {
     var currentFrame = Date.now();
@@ -77,6 +85,9 @@ function Update()
         Draw();
         viewer.needDraw = false;
     }
+
+    document.querySelector("#drawing").innerHTML = viewer.drawing;
+    document.querySelector("#drawingLine").innerHTML = viewer.coordsInLine;
 
 
     // continues update loop
@@ -115,6 +126,7 @@ function Draw()
     PostUpdate();
 }
 
+// TODO: try to batch cells in grid by color to lower fillstyle changes
 function DrawGrid()
 {
     // grid coords within the window bounds, inclusive
@@ -146,7 +158,7 @@ function DrawSquare(x, y, side)
 function handleInput()
 {
     // gathers grid coords in a set to remove duplicates
-    gridCoords = new Set();
+    gridCoords = new NSet();
 
     viewer.screenCoordsActivated.forEach(val => {
         // converts screen space to grid space
@@ -154,18 +166,31 @@ function handleInput()
         gridCoord.sub_int(10);
         gridCoord.div_int(viewer.cellSize);
         gridCoord = Vector.floor(gridCoord);
+
         console.log(val);
         console.log(gridCoord);
-        console.log(" "); // mouse coords are strange and the cell sizes are 20 pixels not 10
-
         gridCoords.add(gridCoord);
     });
-    
-    gridCoords.forEach(val => {
+
+    console.log(viewer.coordsInLine);
+    console.log(NSet.difference(gridCoords, viewer.coordsInLine));
+    console.log(" ");
+
+    NSet.difference(gridCoords, viewer.coordsInLine).forEach(val => {
         GameofLife.grid.setCell(val, !GameofLife.grid.getCell(val));
     })
 
     viewer.screenCoordsActivated = [];
+
+    // keeps track of all coordinates in the line being drawn
+    if (!viewer.drawing)
+    {
+        viewer.coordsInLine = new NSet();
+    }
+    else 
+    {
+        viewer.coordsInLine.union(gridCoords);
+    }
 }
 
 // stores the coord of the bottom left corner of the screen and other viewing stuff
@@ -175,9 +200,12 @@ class Viewer
     {
         this.pos = pos;
         this.zoom = zoom;
-        this.needDraw = false;
-        this.screenCoordsActivated = [];
         this.cellSize = defaultCellSize * zoom;
+
+        this.needDraw = false;
+        this.drawing = false;
+        this.screenCoordsActivated = [];
+        this.coordsInLine = new NSet();
     }
 
     setZoom(z)
