@@ -72,6 +72,24 @@ class Vector
         return this.x === other_vector.x && this.y === other_vector.y;
     }
 
+    floor()
+    {
+        this.x = Math.floor(this.x);
+        this.y = Math.floor(this.y);
+    }
+
+    ceil()
+    {
+        this.x = Math.ceil(this.x);
+        this.y = Math.ceil(this.y);
+    }
+
+    abs()
+    {
+        this.x = Math.abs(this.x);
+        this.y = Math.abs(this.y);
+    }
+
     // static versions of above methods that will return new vectors, instead of modifying one of them
     static add(vector, other_vector)
     {
@@ -111,6 +129,11 @@ class Vector
     static ceil(vector)
     {
         return new Vector(Math.ceil(vector.x), Math.ceil(vector.y));
+    }
+
+    static abs(vector)
+    {
+        return new Vector(Math.abs(vector.x), Math.abs(vector.y));
     }
 
     toString()

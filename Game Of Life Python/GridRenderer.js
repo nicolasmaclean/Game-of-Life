@@ -157,30 +157,13 @@ function DrawSquare(x, y, side)
 // handles input stored in the Viewer object
 function handleInput()
 {
-    // gathers grid coords in a set to remove duplicates
-    gridCoords = new NSet();
-
-    viewer.screenCoordsActivated.forEach(val => {
-        // converts screen space to grid space
-        var gridCoord = Vector.sub(val, viewer.pos);
-        gridCoord.sub_int(10);
-        gridCoord.div_int(viewer.cellSize);
-        gridCoord = Vector.floor(gridCoord);
-
-        console.log(val);
-        console.log(gridCoord);
-        gridCoords.add(gridCoord);
-    });
-
-    console.log(viewer.coordsInLine);
-    console.log(NSet.difference(gridCoords, viewer.coordsInLine));
-    console.log(" ");
-
-    NSet.difference(gridCoords, viewer.coordsInLine).forEach(val => {
+    var inCoords = NSet.difference(viewer.newCoords, viewer.coordsInLine);
+    inCoords.forEach(val =>
+    {
         GameofLife.grid.setCell(val, !GameofLife.grid.getCell(val));
     })
 
-    viewer.screenCoordsActivated = [];
+    viewer.newCoords = new NSet();
 
     // keeps track of all coordinates in the line being drawn
     if (!viewer.drawing)
@@ -189,7 +172,7 @@ function handleInput()
     }
     else 
     {
-        viewer.coordsInLine.union(gridCoords);
+        viewer.coordsInLine.union(inCoords);
     }
 }
 
@@ -204,7 +187,7 @@ class Viewer
 
         this.needDraw = false;
         this.drawing = false;
-        this.screenCoordsActivated = [];
+        this.newCoords = new NSet();
         this.coordsInLine = new NSet();
     }
 
@@ -223,6 +206,16 @@ class Viewer
     addZoom(a)
     {
         this.setZoom(this.zoom + a);
+    }
+
+    screenToGrid(coord)
+    {
+        var gridCoord = Vector.sub(coord, viewer.pos);
+        gridCoord.sub_int(10);
+        gridCoord.div_int(viewer.cellSize);
+        gridCoord = Vector.floor(gridCoord);
+
+        return gridCoord;
     }
 }
 

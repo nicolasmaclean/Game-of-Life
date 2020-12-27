@@ -40,6 +40,11 @@ class NSet
         return this.search(item) !== -1
     }
 
+    size()
+    {
+        return this.arr.length;
+    }
+
     // attempts to delete item at requested position
     delete(i)
     {
