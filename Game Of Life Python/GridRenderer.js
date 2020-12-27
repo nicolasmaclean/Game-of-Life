@@ -7,6 +7,8 @@
 // To Use: include the the the included js files and a canvas element with the id "glcanvas"
 // left click is used to move the viewer's position across the grid
 // right click can be held or pressed to toggle cells' states
+// p will pause the simulation
+// space will manually step the simulation once
 
 
 // enums
@@ -20,7 +22,8 @@ const loopEnum = {
 var defaultCellSize = 10;
 var clr_bg = '#c0c0c0';
 var fps = 10;
-var update = loopEnum.drawLoop;
+var fpsS = 20;
+var update = loopEnum.stepLoop;
 
 // artifacts occur outside of these zoom ranges with html canvas
 var minZoom = 10 / defaultCellSize;
@@ -37,6 +40,7 @@ var userInput;
 // misc globals
 var xBounds, yBounds;
 var lastFrame, fpsInterval;
+var lastFrameS, fpsIntervalS;
 
 
 function Start()
@@ -46,10 +50,12 @@ function Start()
     draw = canvas.getContext('2d');
 
     // initializes other stuffs
-    viewer = new Viewer(new Vector(0, 0), 1);
+    viewer = new Viewer(new Vector(0, 0), 1, new Vector(canvas.width, canvas.height));
     userInput = new UserInput(viewer, canvas);
     fpsInterval = 1000 / fps;
     lastFrame = Date.now();
+    fpsIntervalS = 1000 / fps;
+    lastFrameS = Date.now();
 
     // initializes Cellular Automata Simulation
     GameofLife = new CellularAutomata();
@@ -71,10 +77,26 @@ function Update()
     var currentFrame = Date.now();
     elapsed = currentFrame - lastFrame;
 
+    var currentFrameS = Date.now();
+    elapsedS = currentFrameS - lastFrameS;
+
     // simulation loop
-    if (update === loopEnum.stepLoop && elapsed > fpsInterval)
+    if (!viewer.paused && update === loopEnum.stepLoop && elapsed > fpsInterval)
     {
         lastFrame = currentFrame - (elapsed % fpsInterval);
+        
+        PreUpdate();
+        
+        handleInput();
+        GameofLife.step();
+        
+        PostUpdate();
+    }
+    
+    // single step
+    else if ((update !== loopEnum.stepLoop || viewer.paused) && viewer.step && elapsedS > fpsIntervalS) // add a fps controller
+    {
+        lastFrameS = currentFrameS - (elapsedS % fpsIntervalS);
 
         PreUpdate();
 
@@ -82,10 +104,12 @@ function Update()
         GameofLife.step();
 
         PostUpdate();
+
+        viewer.step = false;
     }
 
     // draw loop
-    else if (update === loopEnum.drawLoop && viewer.needDraw)
+    else if (((viewer.paused || update === loopEnum.drawLoop) && viewer.needDraw) || viewer.needDraw)
     {
         handleInput();
         Draw();

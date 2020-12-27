@@ -29,6 +29,7 @@ class UserInput
         canvas.onmouseleave = function (event)
         {
             UserInput.mouseUp_left(event);
+            UserInput.mouseClick_right(event);
         };
         
         canvas.onwheel = function (event)
@@ -39,15 +40,29 @@ class UserInput
             }
         };
 
-        canvas.oncontextmenu = function (e) {
-            e.preventDefault();
+        canvas.oncontextmenu = function (event) {
+            event.preventDefault();
             UserInput.mouseClick_right(event);
         };
+
+        document.onkeydown = function (event) {
+            if (event.key === " ")
+            {
+                UserInput.spaceDown(event);
+            }
+            else if (event.key === "p" && !event.repeat)
+            {
+                UserInput.pDown(event);
+            }
+        }
     }
 
     // moves the viewer by mouse delta on mousemove event
     static mouseMove(e)
     {
+        // tracks mouse position
+        UserInput.viewer.mousePos = new Vector(e.clientX, e.clientY);
+
         // moves camera when the user is holding the canvas
         if (e.buttons === 1 && UserInput.mouse_grabbing)
         {
@@ -209,5 +224,15 @@ class UserInput
         }
 
         return coords;
+    }
+
+    static spaceDown(e)
+    {
+        UserInput.viewer.step = true;
+    }
+
+    static pDown(e)
+    {
+        UserInput.viewer.paused = !UserInput.viewer.paused;
     }
 }
