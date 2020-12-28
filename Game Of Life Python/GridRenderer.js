@@ -21,6 +21,7 @@ const loopEnum = {
 // configurations
 var defaultCellSize = 10;
 var clr_bg = '#c0c0c0';
+// var clr_bg = 'white';
 var fps = 10;
 var fpsS = 20;
 var update = loopEnum.stepLoop;
@@ -33,6 +34,10 @@ var maxZoom = 90 / defaultCellSize;
 var canvas;
 var draw;
 
+var T_generations;
+var T_drawing;
+var T_lineCoords;
+
 var GameofLife;
 var viewer;
 var userInput;
@@ -41,6 +46,7 @@ var userInput;
 var xBounds, yBounds;
 var lastFrame, fpsInterval;
 var lastFrameS, fpsIntervalS;
+var generation = 0;
 
 
 function Start()
@@ -48,6 +54,10 @@ function Start()
     // gets HTML stuff ready
     canvas = document.querySelector("#glCanvas");
     draw = canvas.getContext('2d');
+
+    T_generations = document.querySelector("#generation");
+    T_drawing = document.querySelector("#drawing");
+    T_lineCoords = document.querySelector("#drawingLine");
 
     // initializes other stuffs
     viewer = new Viewer(new Vector(0, 0), 1, new Vector(canvas.width, canvas.height));
@@ -89,6 +99,7 @@ function Update()
         
         handleInput();
         GameofLife.step();
+        generation++;
         
         PostUpdate();
     }
@@ -102,6 +113,7 @@ function Update()
 
         handleInput();
         GameofLife.step();
+        generation++;
 
         PostUpdate();
 
@@ -116,8 +128,9 @@ function Update()
         viewer.needDraw = false;
     }
 
-    document.querySelector("#drawing").innerHTML = viewer.drawing;
-    document.querySelector("#drawingLine").innerHTML = viewer.coordsInLine;
+    T_generations.innerHTML = generation;
+    T_drawing.innerHTML = viewer.drawing;
+    T_lineCoords.innerHTML = viewer.coordsInLine;
 
 
     // continues update loop
@@ -170,18 +183,21 @@ function DrawGrid()
             // screen coords
             var cx = x*viewer.cellSize + viewer.pos.x;
             var cy = y*viewer.cellSize + viewer.pos.y;
-
+            
             // draws cell
             draw.fillStyle = Cell.getColor(GameofLife.grid.getCell(new Vector(x, y)));
-            DrawSquare(cx, cy, viewer.cellSize);
+            DrawCell(cx, cy, viewer.cellSize);
         }
     }
 }
 
 // draws a square at x, y with width and height of side length
-function DrawSquare(x, y, side)
+function DrawCell(x, y, side)
 {
     draw.fillRect(Math.floor(x) + 1, Math.floor(y) + 1, side - 1, side - 1);
+    // draw.beginPath();
+    // draw.arc(Math.floor(x)+1, Math.floor(y)+1, (side-1)/2, 0, 360)
+    // draw.fill();
 }
 
 // handles input stored in the Viewer object
