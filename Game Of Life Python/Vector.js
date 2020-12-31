@@ -90,6 +90,22 @@ class Vector
         this.y = Math.abs(this.y);
     }
 
+    copy()
+    {
+        var v = new Vector();
+        v.x = this.x;
+        v.y = this.y;
+
+        return v;
+    }
+
+    lerp(other_vector, factor)
+    {
+        var l = Vector.sub(other_vector, this);
+        l.mult_int(factor);
+        this.add(l);
+    }
+
     // static versions of above methods that will return new vectors, instead of modifying one of them
     static add(vector, other_vector)
     {
@@ -109,6 +125,26 @@ class Vector
     static div(vector, other_vector)
     {
         return new Vector(vector.x / other_vector.x, vector.y / other_vector.y);
+    }
+
+    static add_int(vector, value)
+    {
+        return new Vector(vector.x + value, vector.y + value);
+    }
+
+    static sub_int(vector, value)
+    {
+        return new Vector(vector.x - value, vector.y - value);
+    }
+    
+    static mult_int(vector, value)
+    {
+        return new Vector(vector.x * value, vector.y * value);
+    }
+    
+    static div_int(vector, value)
+    {
+        return new Vector(vector.x / value, vector.y / value);
     }
 
     static equals(vector, other_vector)
@@ -134,6 +170,14 @@ class Vector
     static abs(vector)
     {
         return new Vector(Math.abs(vector.x), Math.abs(vector.y));
+    }
+
+    static lerp(vector, other_vector, factor)
+    {
+        var l = Vector.sub(other_vector, vector);
+        l.mult_int(factor);
+        l.add(vector);
+        return l;
     }
 
     toString()

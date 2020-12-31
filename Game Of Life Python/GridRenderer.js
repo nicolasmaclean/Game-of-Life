@@ -26,8 +26,8 @@ var fps = 10;
 var fpsS = 20;
 var update = loopEnum.stepLoop;
 
-// artifacts occur outside of these zoom ranges with html canvas
-var minZoom = 10 / defaultCellSize;
+// viewer configs TODO: move into the viewer class
+var minZoom = 8 / defaultCellSize;
 var maxZoom = 90 / defaultCellSize;
 
 // references
@@ -37,6 +37,7 @@ var draw;
 var T_generations;
 var T_drawing;
 var T_lineCoords;
+var T_coords;
 
 var GameofLife;
 var viewer;
@@ -58,9 +59,11 @@ function Start()
     T_generations = document.querySelector("#generation");
     T_drawing = document.querySelector("#drawing");
     T_lineCoords = document.querySelector("#drawingLine");
+    T_coords = document.querySelector("#coord");
 
     // initializes other stuffs
-    viewer = new Viewer(new Vector(0, 0), 1, new Vector(canvas.width, canvas.height));
+    viewer = new Viewer(new Vector(0, 0), .8, new Vector(canvas.width, canvas.height), .2);
+    viewer.moveToOrigin();
     userInput = new UserInput(viewer, canvas);
     fpsInterval = 1000 / fps;
     lastFrame = Date.now();
@@ -69,7 +72,7 @@ function Start()
 
     // initializes Cellular Automata Simulation
     GameofLife = new CellularAutomata();
-    GameofLife.grid.setCells_true([new Vector(5, 4), new Vector(5, 5), new Vector(5, 6)]);
+    GameofLife.grid.setCells_true([new Vector(-1, 0), new Vector(-1, -1), new Vector(-1, -2)]);
 
     // draw inital grid
     PreUpdate();
@@ -79,7 +82,6 @@ function Start()
     Update();
 }
 
-// TODO: figure out how I want it to loop or not
 // TODO: cut out as much redrawing as possible. only redraw parts of the canvas that need it, if there has been any changes to the cells displayed
 function Update()
 {
@@ -121,7 +123,7 @@ function Update()
     }
 
     // draw loop
-    else if (((viewer.paused || update === loopEnum.drawLoop) && viewer.needDraw) || viewer.needDraw)
+    else if (((viewer.paused || update === loopEnum.drawLoop) && viewer.needDraw) || viewer.needDraw || !viewer.targetPos.equals(viewer.pos))
     {
         handleInput();
         Draw();
@@ -131,6 +133,7 @@ function Update()
     T_generations.innerHTML = generation;
     T_drawing.innerHTML = viewer.drawing;
     T_lineCoords.innerHTML = viewer.coordsInLine;
+    T_coords.innerHTML = viewer.gridPosition();
 
 
     // continues update loop
@@ -143,6 +146,8 @@ function PreUpdate()
     // clears the canvas
     draw.fillStyle = clr_bg;
     draw.fillRect(0, 0, canvas.width, canvas.height);
+
+    viewer.Update();
 }
 
 function PostUpdate()
@@ -191,7 +196,7 @@ function DrawGrid()
     }
 }
 
-// draws a square at x, y with width and height of side length
+// draws a square at x, y with width and height of side length TODO: move this the Cell class
 function DrawCell(x, y, side)
 {
     draw.fillRect(Math.floor(x) + 1, Math.floor(y) + 1, side - 1, side - 1);
@@ -207,6 +212,7 @@ function handleInput()
     var inCoords = NSet.difference(viewer.newCoords, viewer.coordsInLine);
     inCoords.forEach(val =>
     {
+        console.log(val);
         GameofLife.grid.setCell(val, !GameofLife.grid.getCell(val));
     })
 

@@ -29,7 +29,8 @@ class UserInput
         canvas.onmouseleave = function (event)
         {
             UserInput.mouseUp_left(event);
-            UserInput.mouseClick_right(event);
+            UserInput.viewer.needDraw = true;
+            UserInput.viewer.drawing = false;
         };
         
         canvas.onwheel = function (event)
@@ -66,7 +67,7 @@ class UserInput
         // moves camera when the user is holding the canvas
         if (e.buttons === 1 && UserInput.mouse_grabbing)
         {
-            UserInput.viewer.pos.add(new Vector(e.movementX, e.movementY));
+            UserInput.viewer.targetPos.add(new Vector(e.movementX, e.movementY));
             UserInput.viewer.needDraw = true;
         }
 

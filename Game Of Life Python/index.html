@@ -18,23 +18,21 @@
 
         p1
         {
+            line-height: 175%;
+        }
+
+        input[type="text"]
+        {
             line-height: 150%;
+            font-size: medium;
+            border-style: hidden;
+            background-color: aqua;
+            /* width: 0; */
+            
         }
     </style>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
-
-    <!-- javascript files -->
-    <script type="text/javascript" src="GridRenderer.js"></script>
-    <script type="text/javascript" src="Viewer.js"></script>
-    <script type="text/javascript" src="Cell.js"></script>
-    <script type="text/javascript" src="CellularAutomata.js"></script>
-    <script type="text/javascript" src="Grid.js"></script>
-    <script type="text/javascript" src="Rules.js"></script>
-    <script type="text/javascript" src="UserInput.js"></script>
-    <script type="text/javascript" src="Vector.js"></script>
-    <script type="text/javascript" src="NSet.js"></script>
-
 </head>
 <body>
     <canvas id="glCanvas" width="500" height="500">
@@ -46,6 +44,10 @@
 
         <p1> Generation: </p1>
         <p1 id="generation"> n/a </p1>
+        <br/>
+
+        <p1> Coordinate: </p1>
+        <p1 id="coord"> n/a </p1>
         <br/>
     </section>
 
@@ -61,4 +63,16 @@
         <br/>
     </section>
 </body>
+
+<!-- javascript files -->
+<script type="text/javascript" src="GridRenderer.js"></script>
+<script type="text/javascript" src="Viewer.js"></script>
+<script type="text/javascript" src="Cell.js"></script>
+<script type="text/javascript" src="CellularAutomata.js"></script>
+<script type="text/javascript" src="Grid.js"></script>
+<script type="text/javascript" src="Rules.js"></script>
+<script type="text/javascript" src="UserInput.js"></script>
+<script type="text/javascript" src="Vector.js"></script>
+<script type="text/javascript" src="NSet.js"></script>
+
 </html>
